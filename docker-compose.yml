@@ -1,0 +1,101 @@
+version: "3"
+
+services:
+  order-db:
+    container_name: "order-db"
+    image: "bitnami/postgresql:16"
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${ORDER_DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${ORDER_DATABASE_PASSWORD}
+      POSTGRES_DB: ${ORDER_DATABASE_NAME}
+    networks:
+      - saga-pattern-orchestration-net
+
+  product-db:
+    container_name: "product-db"
+    image: "bitnami/postgresql:16"
+    ports:
+      - "5433:5432"
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${PRODUCT_DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${PRODUCT_DATABASE_PASSWORD}
+      POSTGRES_DB: ${PRODUCT_DATABASE_NAME}
+    networks:
+      - saga-pattern-orchestration-net
+
+  payment-db:
+    container_name: "payment-db"
+    image: "bitnami/postgresql:16"
+    ports:
+      - "5434:5432"
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${PAYMENT_DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${PAYMENT_DATABASE_PASSWORD}
+      POSTGRES_DB: ${PAYMENT_DATABASE_NAME}
+    networks:
+      - saga-pattern-orchestration-net
+
+  notification-db:
+    container_name: "notification-db"
+    image: "bitnami/postgresql:16"
+    ports:
+      - "5435:5432"
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${NOTIFICATION_DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${NOTIFICATION_DATABASE_PASSWORD}
+      POSTGRES_DB: ${NOTIFICATION_DATABASE_NAME}
+    networks:
+      - saga-pattern-orchestration-net
+
+  spo-kafka:
+    container_name: spo-kafka
+    image: obsidiandynamics/kafka:2.3.0-11
+    restart: "no"
+    ports:
+      - "2181:2181"
+      - "9092:9092"
+    environment:
+      KAFKA_LISTENERS: "INTERNAL://:29092,EXTERNAL://:9092"
+      KAFKA_ADVERTISED_LISTENERS: "INTERNAL://spo-kafka:29092,EXTERNAL://localhost:9092"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
+      KAFKA_ZOOKEEPER_SESSION_TIMEOUT: "6000"
+      KAFKA_RESTART_ATTEMPTS: "10"
+      KAFKA_RESTART_DELAY: "5"
+      ZOOKEEPER_AUTOPURGE_PURGE_INTERVAL: "0"
+    volumes:
+      - ./data/kafka/data:/var/lib/kafka/data
+    networks:
+      - saga-pattern-orchestration-net
+
+  spo-redpanda-console:
+    container_name: spo-redpanda-console
+    image: docker.redpanda.com/redpandadata/console:v2.3.8
+    restart: on-failure
+    entrypoint: /bin/sh
+    command: -c "echo \"$$CONSOLE_CONFIG_FILE\" > /tmp/config.yml; /app/console"
+    depends_on:
+      - spo-kafka
+    ports:
+      - "9093:8080"
+    environment:
+      CONFIG_FILEPATH: /tmp/config.yml
+      CONSOLE_CONFIG_FILE: |
+        kafka:
+          brokers: ["spo-kafka:29092"]
+    networks:
+      - saga-pattern-orchestration-net
+
+networks:
+  saga-pattern-orchestration-net:
+    driver: bridge
