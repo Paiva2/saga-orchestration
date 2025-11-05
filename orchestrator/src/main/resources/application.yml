@@ -1,0 +1,13 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: orchestrator
+  kafka:
+    bootstrap-servers: ${KAFKA_HOST}:${KAFKA_PORT}
+    topic:
+      orchestrator: orchestrator
+    consumer:
+      auto-offset-reset: latest
+      group-id: orchestrator_group
