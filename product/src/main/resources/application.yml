@@ -1,0 +1,27 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: product
+  datasource:
+    url: jdbc:postgresql://${PRODUCT_DATABASE_HOST}:${PRODUCT_DATABASE_PORT}/${PRODUCT_DATABASE_NAME}
+    username: ${PRODUCT_DATABASE_USERNAME}
+    password: ${PRODUCT_DATABASE_PASSWORD}
+  jpa:
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: false
+  kafka:
+    bootstrap-servers: ${KAFKA_HOST}:${KAFKA_PORT}
+    topic:
+      product-validation: product-validation
+      product-validation-failed: product-validation-failed
+    consumer:
+      auto-offset-reset: latest
+      group-id: product_group
