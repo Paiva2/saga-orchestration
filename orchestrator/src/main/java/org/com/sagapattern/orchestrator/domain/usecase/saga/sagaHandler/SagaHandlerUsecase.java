@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.com.sagapattern.orchestrator.application.config.constants.SagaConstants;
 import org.com.sagapattern.orchestrator.domain.common.dto.SagaEvent;
-import org.com.sagapattern.orchestrator.domain.common.dto.SagaHistory;
 import org.com.sagapattern.orchestrator.domain.common.exception.GenericException;
 import org.com.sagapattern.orchestrator.domain.enums.ESagaPhase;
 import org.com.sagapattern.orchestrator.domain.enums.ESagaSources;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Component;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.UUID;
 
 import static org.com.sagapattern.orchestrator.application.config.constants.SagaConstants.*;
@@ -32,7 +30,6 @@ public class SagaHandlerUsecase {
 
     public void execute(String message) {
         SagaEvent event = parseEvent(message);
-        String messageStatus;
         String destinationTopic;
 
         try {
@@ -44,7 +41,6 @@ public class SagaHandlerUsecase {
                     event.setEventTransactionId(generateTxId());
                 }
 
-                messageStatus = "Orchestrator received start order";
                 destinationTopic = ETopics.PRODUCT_VALIDATION.getTopic();
             } else {
                 String currentEventSource = event.getSource();
@@ -53,20 +49,16 @@ public class SagaHandlerUsecase {
                 String[] destinationFlow = findDestinationFlow(currentEventSource, currentPhase);
 
                 destinationTopic = destinationFlow[TOPIC_INDEX];
-
-                messageStatus = "Message handled by orchestrator successfully from source: " + currentEventSource;
             }
         } catch (Exception e) {
             log.error("Error while trying to handle new event: {}", e.getMessage());
             event.setSource(ESagaSources.ORCHESTRATOR.name());
             event.setPhase(ESagaPhase.FAILED);
 
-            messageStatus = "Error while trying to handle new event on orchestrator";
             // bom ver depois pq nao faz sentido dar ending fail do nada se falhar no meio do processo
             destinationTopic = ETopics.ORDER_ENDING_FAIL.getTopic();
         }
 
-        updateHistory(event, messageStatus);
         sagaProducer.sendMessage(destinationTopic, event);
     }
 
@@ -83,16 +75,5 @@ public class SagaHandlerUsecase {
 
     public String generateTxId() {
         return MessageFormat.format("{0}_{1}", Calendar.getInstance().toInstant(), UUID.randomUUID().toString());
-    }
-
-    private void updateHistory(SagaEvent event, String message) {
-        SagaHistory history = SagaHistory.builder()
-            .source(event.getSource())
-            .phase(event.getPhase())
-            .timestamp(new Date())
-            .statusMessage(message)
-            .build();
-
-        event.addHistory(history);
     }
 }

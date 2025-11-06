@@ -2,15 +2,15 @@ package org.com.sagapattern.product.application.entrypoint.saga;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.com.sagapattern.product.application.domain.usecase.saga.order.rollbackProduct.RollbackProductUsecase;
-import org.com.sagapattern.product.application.domain.usecase.saga.order.validateProduct.ValidateProductUsecase;
+import org.com.sagapattern.product.domain.usecase.saga.order.rollbackProduct.RollbackProductUsecase;
+import org.com.sagapattern.product.domain.usecase.saga.order.validateProduct.ValidateProductUsecase;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Controller;
 
 @Slf4j
 @Controller
 @RequiredArgsConstructor
-public class SagaController {
+public class OrderSagaController {
     private final ValidateProductUsecase validateProductUsecase;
     private final RollbackProductUsecase rollbackProductUsecase;
 
@@ -20,9 +20,10 @@ public class SagaController {
     )
     public void executeValidation(String message) {
         try {
-            log.info("SagaController#executeValidation: message={}", message);
+            log.info("OrderSagaController#executeValidation: message={}", message);
+            validateProductUsecase.execute(message);
         } catch (Exception e) {
-            log.error("Error: SagaController#executeValidation: message={}", message, e);
+            log.error("Error: OrderSagaController#executeValidation: message={}", message, e);
             throw new RuntimeException("Error while receiving new message on saga controller!");
         }
     }
@@ -33,9 +34,9 @@ public class SagaController {
     )
     public void executeRollback(String message) {
         try {
-            log.info("SagaController#executeRollback: message={}", message);
+            log.info("OrderSagaController#executeRollback: message={}", message);
         } catch (Exception e) {
-            log.error("Error: SagaController#executeRollback: message={}", message, e);
+            log.error("Error: OrderSagaController#executeRollback: message={}", message, e);
             throw new RuntimeException("Error while receiving new message on saga controller!");
         }
     }
