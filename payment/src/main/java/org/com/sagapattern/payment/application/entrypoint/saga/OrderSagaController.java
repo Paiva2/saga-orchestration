@@ -1,9 +1,9 @@
-package org.com.sagapattern.product.application.entrypoint.saga;
+package org.com.sagapattern.payment.application.entrypoint.saga;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.com.sagapattern.product.domain.usecase.saga.order.rollbackProduct.RollbackProductUsecase;
-import org.com.sagapattern.product.domain.usecase.saga.order.validateProduct.ValidateProductUsecase;
+import org.com.sagapattern.payment.domain.usecase.saga.rollbackPayment.RollbackPaymentUsecase;
+import org.com.sagapattern.payment.domain.usecase.saga.validatePayment.ValidatePaymentUsecase;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Controller;
 
@@ -11,17 +11,17 @@ import org.springframework.stereotype.Controller;
 @Controller
 @RequiredArgsConstructor
 public class OrderSagaController {
-    private final ValidateProductUsecase validateProductUsecase;
-    private final RollbackProductUsecase rollbackProductUsecase;
+    private final ValidatePaymentUsecase validatePaymentUsecase;
+    private final RollbackPaymentUsecase rollbackPaymentUsecase;
 
     @KafkaListener(
-        topics = "${spring.kafka.topic.product-validation}",
+        topics = "${spring.kafka.topic.payment-validation}",
         groupId = "${spring.kafka.consumer.group-id}"
     )
     public void executeValidation(String message) {
         try {
             log.info("OrderSagaController#executeValidation: message={}", message);
-            validateProductUsecase.execute(message);
+            validatePaymentUsecase.execute(message);
         } catch (Exception e) {
             log.error("Error: OrderSagaController#executeValidation: message={}", message, e);
             throw new RuntimeException("Error while receiving new message on saga controller!");
@@ -29,13 +29,13 @@ public class OrderSagaController {
     }
 
     @KafkaListener(
-        topics = "${spring.kafka.topic.product-validation-failed}",
+        topics = "${spring.kafka.topic.payment-validation-failed}",
         groupId = "${spring.kafka.consumer.group-id}"
     )
     public void executeRollback(String message) {
         try {
             log.info("OrderSagaController#executeRollback: message={}", message);
-            rollbackProductUsecase.execute(message);
+            rollbackPaymentUsecase.execute(message);
         } catch (Exception e) {
             log.error("Error: OrderSagaController#executeRollback: message={}", message, e);
             throw new RuntimeException("Error while receiving new message on saga controller!");

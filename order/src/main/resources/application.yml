@@ -26,6 +26,7 @@ spring:
       order-ending-success: order-ending-success
       order-ending-fail: order-ending-fail
       orchestrator: orchestrator
+      notification: notification
     consumer:
       auto-offset-reset: latest
       group-id: order_group

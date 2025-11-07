@@ -18,7 +18,7 @@ import java.util.List;
 public class SagaEvent {
     private String eventTransactionId;
     private String source;
-    private Object payload;
+    private OrderSagaOutput payload;
     private ESagaPhase phase;
     private List<SagaHistory> history;
 

@@ -1,6 +1,7 @@
-package org.com.sagapattern.order.domain.usecase.createOrderUsecase;
+package org.com.sagapattern.order.domain.usecase.createOrder;
 
 import lombok.AllArgsConstructor;
+import org.com.sagapattern.order.domain.common.dto.OrderSagaOutput;
 import org.com.sagapattern.order.domain.common.dto.SagaEvent;
 import org.com.sagapattern.order.domain.common.dto.SagaHistory;
 import org.com.sagapattern.order.domain.entity.Order;
@@ -8,10 +9,9 @@ import org.com.sagapattern.order.domain.entity.OrderProduct;
 import org.com.sagapattern.order.domain.entity.Product;
 import org.com.sagapattern.order.domain.enums.EOrderStatus;
 import org.com.sagapattern.order.domain.enums.ESagaPhase;
-import org.com.sagapattern.order.domain.usecase.createOrderUsecase.dto.CreateOrderInput;
-import org.com.sagapattern.order.domain.usecase.createOrderUsecase.dto.CreateOrderOutput;
-import org.com.sagapattern.order.domain.usecase.createOrderUsecase.exception.ProductsNotAvailableException;
-import org.com.sagapattern.order.domain.usecase.createOrderUsecase.exception.ProductsNotFoundException;
+import org.com.sagapattern.order.domain.usecase.createOrder.dto.CreateOrderInput;
+import org.com.sagapattern.order.domain.usecase.createOrder.exception.ProductsNotAvailableException;
+import org.com.sagapattern.order.domain.usecase.createOrder.exception.ProductsNotFoundException;
 import org.com.sagapattern.order.infra.persistence.OrderRepository;
 import org.com.sagapattern.order.infra.persistence.ProductRepository;
 import org.com.sagapattern.order.infra.saga.SagaHandler;
@@ -40,6 +40,7 @@ public class CreateOrderUsecase {
             .paymentMethod(input.getPaymentMethod())
             .status(EOrderStatus.CREATED)
             .installments(input.getInstallments())
+            .endCustomerEmail(input.getEndCustomerEmail())
             .orderTotal(sumTotalOrder(input, mapProductValues))
             .itemsQuantity(sumTotalItems(input))
             .build();
@@ -148,14 +149,14 @@ public class CreateOrderUsecase {
         sagaHandler.startNewOrderSaga(sagaEvent);
     }
 
-    private CreateOrderOutput mountOutput(Order order) {
-        return CreateOrderOutput.builder()
+    private OrderSagaOutput mountOutput(Order order) {
+        return OrderSagaOutput.builder()
             .orderId(order.getId())
             .totalValue(order.getOrderTotal())
             .totalItems(order.getItemsQuantity())
             .paymentMethod(order.getPaymentMethod())
             .installments(order.getInstallments())
-            .products(order.getProducts().stream().map(op -> CreateOrderOutput.ProductInput.builder()
+            .products(order.getProducts().stream().map(op -> OrderSagaOutput.ProductInput.builder()
                     .productId(op.getProduct().getId())
                     .quantity(op.getQuantity())
                     .sku(op.getProduct().getSku())

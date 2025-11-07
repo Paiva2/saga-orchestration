@@ -2,8 +2,8 @@ package org.com.sagapattern.order.application.entrypoint.controller;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.com.sagapattern.order.domain.usecase.createOrderUsecase.CreateOrderUsecase;
-import org.com.sagapattern.order.domain.usecase.createOrderUsecase.dto.CreateOrderInput;
+import org.com.sagapattern.order.domain.usecase.createOrder.CreateOrderUsecase;
+import org.com.sagapattern.order.domain.usecase.createOrder.dto.CreateOrderInput;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

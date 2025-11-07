@@ -1,4 +1,4 @@
-package org.com.sagapattern.order.domain.usecase.createOrderUsecase.dto;
+package org.com.sagapattern.order.domain.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateOrderOutput {
+public class OrderSagaOutput {
     private Long orderId;
     private BigDecimal totalValue;
     private Integer totalItems;

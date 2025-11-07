@@ -55,7 +55,6 @@ public class SagaHandlerUsecase {
             event.setSource(ESagaSources.ORCHESTRATOR.name());
             event.setPhase(ESagaPhase.FAILED);
 
-            // bom ver depois pq nao faz sentido dar ending fail do nada se falhar no meio do processo
             destinationTopic = ETopics.ORDER_ENDING_FAIL.getTopic();
         }
 

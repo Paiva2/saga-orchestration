@@ -1,4 +1,4 @@
-package org.com.sagapattern.product.domain.entity;
+package org.com.sagapattern.payment.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

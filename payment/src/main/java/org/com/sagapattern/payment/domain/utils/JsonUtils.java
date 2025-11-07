@@ -1,25 +1,25 @@
-package org.com.sagapattern.order.domain.utils;
+package org.com.sagapattern.payment.domain.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.com.sagapattern.order.domain.common.dto.SagaEvent;
-import org.com.sagapattern.order.domain.common.exception.GenericException;
+import org.com.sagapattern.payment.domain.common.dto.OrderSagaEvent;
+import org.com.sagapattern.payment.domain.common.exception.GenericException;
 import org.springframework.stereotype.Component;
 
 @Component
 public class JsonUtils {
     private final static ObjectMapper mapper = new ObjectMapper();
 
-    public String toJsonString(Object json) {
+    public String toJsonString(OrderSagaEvent orderSagaEvent) {
         try {
-            return mapper.writeValueAsString(json);
+            return mapper.writeValueAsString(orderSagaEvent);
         } catch (Exception e) {
             throw new GenericException("Error while trying to convert json string!");
         }
     }
 
-    public SagaEvent fromJsonString(String message) {
+    public OrderSagaEvent fromJsonString(String message) {
         try {
-            return mapper.readValue(message, SagaEvent.class);
+            return mapper.readValue(message, OrderSagaEvent.class);
         } catch (Exception e) {
             throw new GenericException("Error while trying to convert from json string!");
         }

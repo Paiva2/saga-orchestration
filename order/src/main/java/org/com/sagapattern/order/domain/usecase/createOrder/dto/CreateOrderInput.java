@@ -1,5 +1,6 @@
-package org.com.sagapattern.order.domain.usecase.createOrderUsecase.dto;
+package org.com.sagapattern.order.domain.usecase.createOrder.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -16,6 +17,10 @@ import java.util.List;
 public class CreateOrderInput {
     @NotEmpty
     private List<ProductInput> products;
+
+    @Email
+    @NotEmpty
+    private String endCustomerEmail;
 
     @NotNull
     private EPaymentMethod paymentMethod;

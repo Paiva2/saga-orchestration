@@ -18,12 +18,8 @@ public class SagaConstants {
         {ESagaSources.PRODUCT_SERVICE.name(), ROLLBACK_PENDING.getPhase(), PRODUCT_VALIDATION_FAILED.getTopic()},
         {ESagaSources.PRODUCT_SERVICE.name(), FAILED.getPhase(), ORDER_ENDING_FAIL.getTopic()},
 
-        {ESagaSources.PAYMENT_SERVICE.name(), SUCCESS.getPhase(), NOTIFICATION.getTopic()},
+        {ESagaSources.PAYMENT_SERVICE.name(), SUCCESS.getPhase(), ORDER_ENDING_SUCCESS.getTopic()},
         {ESagaSources.PAYMENT_SERVICE.name(), ROLLBACK_PENDING.getPhase(), PAYMENT_VALIDATION_FAILED.getTopic()},
-        {ESagaSources.PAYMENT_SERVICE.name(), FAILED.getPhase(), PRODUCT_VALIDATION_FAILED.getTopic()},
-
-        {ESagaSources.NOTIFICATION_SERVICE.name(), SUCCESS.getPhase(), ORDER_ENDING_SUCCESS.getTopic()},
-        {ESagaSources.NOTIFICATION_SERVICE.name(), RETRY.getPhase(), NOTIFICATION.getTopic()},
-        {ESagaSources.NOTIFICATION_SERVICE.name(), FAILED.getPhase(), NOTIFICATION_DLQ.getTopic()},
+        {ESagaSources.PAYMENT_SERVICE.name(), FAILED.getPhase(), PRODUCT_VALIDATION_FAILED.getTopic()}
     };
 }

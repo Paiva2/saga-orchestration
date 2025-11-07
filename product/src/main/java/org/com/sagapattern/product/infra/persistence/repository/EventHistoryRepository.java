@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface EventHistoryRepository extends JpaRepository<EventHistory, Long> {
-    Optional<EventHistory> findByEventTransactionId(String eventTransactionId);
+    Optional<EventHistory> findByEventTransactionIdAndStatus(String eventTransactionId, String status);
 }

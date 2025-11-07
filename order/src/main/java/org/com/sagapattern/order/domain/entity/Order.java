@@ -30,6 +30,9 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private EPaymentMethod paymentMethod;
 
+    @Column(name = "or_end_customer_email")
+    private String endCustomerEmail;
+
     @Column(name = "or_status")
     @Enumerated(EnumType.STRING)
     private EOrderStatus status;
